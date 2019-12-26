@@ -57,21 +57,20 @@ namespace miniplc0 {
 		// 唯二接口
 		std::pair<std::vector<Opr*>, std::optional<CompilationError>> Analyse();
 
-		void Analyser::printBinary(std::ostream& output);
+		void printBinary(std::ostream& output);
 	private:
 		// 所有的递归子程序
 
 
 		std::optional<CompilationError> analyseC0Program();
 		std::optional<CompilationError> analyseVarDec();
-		std::optional<CompilationError> Analyser::analyseInitDeclist();
+		std::optional<CompilationError> analyseInitDeclist();
 		std::optional<CompilationError> analyseFunDef();
-		std::optional<CompilationError> Analyser::analyseExp();
-		std::optional<CompilationError> Analyser::analyseAExp();
-		std::optional<CompilationError> Analyser::analyseMExp();
-		std::optional<CompilationError> Analyser::analyseUExp();
-		std::optional<CompilationError> Analyser::analysePExp();
-		std::optional<CompilationError> analyseExpression();
+		std::optional<CompilationError> analyseExp();
+		std::optional<CompilationError> analyseAExp();
+		std::optional<CompilationError> analyseMExp();
+		std::optional<CompilationError> analyseUExp();
+		std::optional<CompilationError> analysePExp();
 
 		std::optional<CompilationError> analyseComp();
 		std::optional<CompilationError> analyseStmtSeq();
@@ -80,13 +79,13 @@ namespace miniplc0 {
 		std::optional<CompilationError> analyseJumpStmt();
 		std::optional<CompilationError> analysePrintStmt();
 		std::optional<CompilationError> analyseScanStmt();
-		std::optional<CompilationError> Analyser::analysePar();
-		std::optional<CompilationError> Analyser::analysePDL();
-		std::optional<CompilationError> Analyser::analysePD();
-		std::optional<CompilationError> Analyser::analyseFunCall();
-		void Analyser::binary2byte(int number, std::ostream& output);
-		void Analyser::binary4byte(int number, std::ostream& output);
-		void Analyser::printBinaryInstruction(Opr* opr, std::ostream& output);
+		std::optional<CompilationError> analysePar();
+		std::optional<CompilationError> analysePDL();
+		std::optional<CompilationError> analysePD();
+		std::optional<CompilationError> analyseFunCall();
+		void binary2byte(int number, std::ostream& output);
+		void binary4byte(int number, std::ostream& output);
+		void printBinaryInstruction(Opr* opr, std::ostream& output);
 
 
 		// Token 缓冲区相关操作
@@ -103,25 +102,19 @@ namespace miniplc0 {
 		void addLdt(const Token& tk);
 		void clrLdt();
 		// 是否被声明过
-		bool isDeclared(const std::string&);
-		// 是否是未初始化的变量
-		// 是否是已初始化的变量
-		bool isInitializedVariable(const std::string&);
 		// 是否是常量
-		bool isConstant(const std::string&);
-		// 是否是常量
-		bool Analyser::isConst(const std::string& s);
-		bool Analyser::isInit(const std::string& s);
-		bool Analyser::isVoid(const std::string& s);
-		bool Analyser::isDclr(const std::string& s);
-		void Analyser::addFunc(const Token& tk);
+		bool isConst(const std::string& s);
+		bool isInit(const std::string& s);
+		bool isVoid(const std::string& s);
+		bool isDclr(const std::string& s);
+		void addFunc(const Token& tk);
 		Func* Analyser::getFunc(const std::string& s);
 		ConstTable* Analyser::getConst(const std::string& s);
 		void Analyser::addConstantF(const Token& tk);
-		std::optional<CompilationError> Analyser::analyseCond();
-		std::optional<CompilationError> Analyser::analyseCondStmt();
-		std::optional<CompilationError> Analyser::analyseExpl();
-		std::optional<CompilationError> Analyser::analysePrint();
+		std::optional<CompilationError> analyseCond();
+		std::optional<CompilationError> analyseCondStmt();
+		std::optional<CompilationError> analyseExpl();
+		std::optional<CompilationError> analysePrint();
 		bool isFunc(const std::string&);
 		// 获得 {变量，常量} 在全局栈上的偏移
 		Var* getG(const std::string&);
