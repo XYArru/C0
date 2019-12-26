@@ -108,9 +108,9 @@ namespace miniplc0 {
 		bool isVoid(const std::string& s);
 		bool isDclr(const std::string& s);
 		void addFunc(const Token& tk);
-		Func* Analyser::getFunc(const std::string& s);
-		ConstTable* Analyser::getConst(const std::string& s);
-		void Analyser::addConstantF(const Token& tk);
+		Func* getFunc(const std::string& s);
+		ConstTable* getConst(const std::string& s);
+		void addConstantF(const Token& tk);
 		std::optional<CompilationError> analyseCond();
 		std::optional<CompilationError> analyseCondStmt();
 		std::optional<CompilationError> analyseExpl();
