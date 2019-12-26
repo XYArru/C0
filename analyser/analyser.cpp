@@ -738,12 +738,10 @@ namespace miniplc0 {
 				}
 				next = nextToken();
 				unreadToken();
-				printf("%s\n",next.value().GetValueString());
 				break;
 			}
 		case TokenType::ZDKH:
 			next = nextToken();
-			//printf("%s\n", next.value().GetValueString().c_str());
 			err = analyseStmtSeq();
 			if (err.has_value())
 				return err;
@@ -1148,19 +1146,22 @@ namespace miniplc0 {
 				buffer[0] = citer->first[j];
 				output.write(buffer, sizeof(char));
 			}
+			citer++;
 		}
 
+		printf("gcc %lld\t%lld\n", Sins.size(), _funcs.size());
 		binary2byte(Sins.size(), output);
 		for (int i = 0; i < Sins.size(); i++) {
 			printBinaryInstruction(Sins.at(i), output);
+			
 		}
-
 		binary2byte(_funcs.size(), output);
 		int i = 0;
 		for (auto fiter = _funcs.begin(); fiter != _funcs.end();i++, fiter++) {
 			binary2byte(i, output);
 			binary2byte(fiter->second->num_par, output);
 			binary2byte(1, output);
+
 			binary2byte(Ains[fiter->first].size(), output);
 			for (int j = 0, tt = Ains[fiter->first].size(); j < tt; j++) {
 				printBinaryInstruction(Ains[fiter->first].at(j), output);
@@ -1170,129 +1171,132 @@ namespace miniplc0 {
 	}
 
 	void Analyser::printBinaryInstruction(Opr* opr, std::ostream& output) {
+		
 		char buffer[1];
-			if (opr->_opr == "nop") {
+			if (std::strcmp(opr->_opr, "nop") == 0) {
 				buffer[0] = 0x00;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "bipush") {
+			else if (std::strcmp(opr->_opr, "bipush") == 0) {
 				buffer[0] = 0x01;
 				output.write(buffer, sizeof(char));
-				buffer[0] = (atoi(opr->_x.c_str()) & 0xff);
-				output.write(buffer, sizeof(char));
+				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "ipush") {
+			else if (std::strcmp(opr->_opr, "ipush") == 0) {
 				buffer[0] = 0x02;
+
 				output.write(buffer, sizeof(char));
-				buffer[0] = (atoi(opr->_x.c_str()) & 0xff);
-				output.write(buffer, sizeof(char));
+				binary4byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "pop") {
+			else if (std::strcmp(opr->_opr, "pop") == 0) {
 				buffer[0] = 0x04;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "loadc") {
+			else if (std::strcmp(opr->_opr, "loadc") == 0) {
 				buffer[0] = 0x09;
 				output.write(buffer, sizeof(char));
-				buffer[0] = (atoi(opr->_x.c_str()) & 0xff);
-				output.write(buffer, sizeof(char));
+				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "loada") {
+			else if (std::strcmp(opr->_opr, "loada") == 0) {
 				buffer[0] = 0x0a;
 				output.write(buffer, sizeof(char));
-				buffer[0] = (atoi(opr->_x.c_str()) & 0xff);
-				output.write(buffer, sizeof(char));
-				buffer[0] = (atoi(opr->_y.c_str()) & 0xff);
-				output.write(buffer, sizeof(char));
+				binary2byte(atoi(opr->_x.c_str()), output);
+
+				binary4byte(atoi(opr->_y.c_str()), output);
 			}
-			else if (opr->_opr == "iload") {
+			else if (std::strcmp(opr->_opr, "iload") == 0) {
 				buffer[0] = 0x10;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "istore") {
+			else if (std::strcmp(opr->_opr, "istore") == 0) {
 				buffer[0] = 0x20;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "iadd") {
+			else if (std::strcmp(opr->_opr, "iadd") == 0) {
 				buffer[0] = 0x30;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "isub") {
+			else if (std::strcmp(opr->_opr, "isub") == 0) {
 				buffer[0] = 0x34;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "imul") {
+			else if (std::strcmp(opr->_opr, "imul") == 0) {
 				buffer[0] = 0x38;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "idiv") {
+			else if (std::strcmp(opr->_opr, "idiv") == 0) {
 				buffer[0] = 0x3c;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "ineg") {
+			else if (std::strcmp(opr->_opr, "ineg") == 0) {
 				buffer[0] = 0x40;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "icmp") {
+			else if (std::strcmp(opr->_opr, "icmp") == 0) {
 				buffer[0] = 0x44;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "jmp") {
+			else if (std::strcmp(opr->_opr, "jmp") == 0) {
 				buffer[0] = 0x70;
 				output.write(buffer, sizeof(char));
 				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "je") {
+			else if (std::strcmp(opr->_opr, "je") == 0) {
 				buffer[0] = 0x71;
 				output.write(buffer, sizeof(char));
 				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "jl") {
+			else if (std::strcmp(opr->_opr, "jn") == 0) {
+				buffer[0] = 0x72;
+				output.write(buffer, sizeof(char));
+				binary2byte(atoi(opr->_x.c_str()), output);
+			}
+			else if (std::strcmp(opr->_opr, "jl") == 0) {
 				buffer[0] = 0x73;
 				output.write(buffer, sizeof(char));
 				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "jge") {
+			else if (std::strcmp(opr->_opr, "jge") == 0) {
 				buffer[0] = 0x74;
 				output.write(buffer, sizeof(char));
 				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "jg") {
+			else if (std::strcmp(opr->_opr, "jg") == 0) {
 				buffer[0] = 0x75;
 				output.write(buffer, sizeof(char));
 				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "jle") {
+			else if (std::strcmp(opr->_opr, "jle") == 0) {
 				buffer[0] = 0x76;
 				output.write(buffer, sizeof(char));
 				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "call") {
+			else if (std::strcmp(opr->_opr, "call") == 0) {
 				buffer[0] = 0x80;
 				output.write(buffer, sizeof(char));
 				binary2byte(atoi(opr->_x.c_str()), output);
 			}
-			else if (opr->_opr == "ret") {
+			else if (std::strcmp(opr->_opr, "ret") == 0) {
 				buffer[0] = 0x88;
 				output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "iret") {
+			else if (std::strcmp(opr->_opr, "iret") == 0) {
 			buffer[0] = 0x89;
 			output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "iprint") {
+			else if (std::strcmp(opr->_opr, "iprint") == 0) {
 			buffer[0] = 0xa0;
 			output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "cprint") {
+			else if (std::strcmp(opr->_opr, "cprint") == 0) {
 			buffer[0] = 0xa2;
 			output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "printl") {
+			else if (std::strcmp(opr->_opr, "print") == 0) {
 			buffer[0] = 0xaf;
 			output.write(buffer, sizeof(char));
 			}
-			else if (opr->_opr == "iscan") {
+			else if (std::strcmp(opr->_opr, "iscan") == 0) {
 			buffer[0] = 0xb0;
 			output.write(buffer, sizeof(char));
 			}

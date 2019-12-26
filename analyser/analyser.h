@@ -102,6 +102,9 @@ namespace miniplc0 {
 		void addLdt(const Token& tk);
 		void clrLdt();
 		// 是否被声明过
+		// 是否是未初始化的变量
+		// 是否是已初始化的变量
+		// 是否是常量
 		// 是否是常量
 		bool isConst(const std::string& s);
 		bool isInit(const std::string& s);
