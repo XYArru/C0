@@ -1,0 +1,8 @@
+# CMake generation dependency list for this directory.
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/3rd_party/fmt/CMakeLists.txt
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/3rd_party/fmt/support/cmake/cxx14.cmake
+D:/Program Files/CMake/share/cmake-3.14/Modules/CMakeCheckCompilerFlagCommonPatterns.cmake
+D:/Program Files/CMake/share/cmake-3.14/Modules/CMakeConfigurableFile.in
+D:/Program Files/CMake/share/cmake-3.14/Modules/CheckCXXCompilerFlag.cmake
+D:/Program Files/CMake/share/cmake-3.14/Modules/CheckCXXSourceCompiles.cmake
+D:/Program Files/CMake/share/cmake-3.14/Modules/CheckSymbolExists.cmake

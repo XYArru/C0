@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\src\format.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\src\posix.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\chrono.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\color.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\compile.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\core.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\format.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\format-inl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\locale.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\ostream.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\posix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\printf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\include\fmt\ranges.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\CMakeLists.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\README.rst" />
+    <None Include="C:\Users\Lenovo\Desktop\code\miniplc0-compiler\3rd_party\fmt\ChangeLog.rst" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{4DAC6CDD-8D40-3EAF-8722-25ACFEAC46C4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{08A98048-EA90-348E-8717-FF9731EA8C9C}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

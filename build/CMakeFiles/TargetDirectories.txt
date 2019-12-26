@@ -1,0 +1,17 @@
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/CMakeFiles/miniplc0.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/CMakeFiles/miniplc0_lib.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/CMakeFiles/miniplc0_test.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/CMakeFiles/INSTALL.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/CMakeFiles/RUN_TESTS.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/argparse/CMakeFiles/INSTALL.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/argparse/CMakeFiles/RUN_TESTS.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/argparse/CMakeFiles/ALL_BUILD.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/fmt/CMakeFiles/INSTALL.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/fmt/CMakeFiles/RUN_TESTS.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/fmt/CMakeFiles/fmt.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/fmt/CMakeFiles/ALL_BUILD.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/catch2/CMakeFiles/INSTALL.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/catch2/CMakeFiles/RUN_TESTS.dir
+C:/Users/Lenovo/Desktop/code/miniplc0-compiler/build/3rd_party/catch2/CMakeFiles/ALL_BUILD.dir
