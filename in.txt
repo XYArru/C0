@@ -1,0 +1,8 @@
+int a;
+int fun(int num){
+return -num;
+}
+int main(){
+int a = 3;
+return -fun(3);
+}
