@@ -1,9 +1,9 @@
 #include "argparse.hpp"
-
+#include "fmt/core.h"
 #include "tokenizer/tokenizer.h"
 #include "analyser/analyser.h"
 #include "instruction/instruction.h"
-
+#include "error/error.h"
 #include <iostream>
 #include <fstream>
 using namespace miniplc0;
@@ -13,6 +13,7 @@ using namespace miniplc0;
 		auto p = tkz.AllTokens();
 		if (p.second.has_value()) {
 			//fmt::print(stderr, "Tokenization error: {}\n", p.second.value());
+			
 			exit(2);
 		}
 		return p.first;
@@ -40,8 +41,9 @@ using namespace miniplc0;
 
 		auto err = analyser.Analyse();
 		if (err.second.has_value()) {
-			printf("sth wrong with analyser");
-			exit(0);
+			auto er = err.second.value();
+			er.print();
+			exit(2);
 		}
 
 

@@ -41,7 +41,12 @@ namespace miniplc0 {
 		ErrCalcVoid,
 		ErrTypedef,
 		ErrMustBeIdentifier,
-		ErrRedefine
+		ErrRedefine,
+		ErrNoKH,
+		ErrCompare,
+		ErrNoIF,
+		ErrNoWHILE,
+		ErrNoScan
 	};
 
 	class CompilationError final {
@@ -58,12 +63,105 @@ namespace miniplc0 {
 		CompilationError& operator=(CompilationError ce) { swap(*this, ce); return *this; }
 		bool operator==(const CompilationError& rhs) const { return _pos == rhs._pos && _err == rhs._err; }
 
+		std::string CtS(ErrorCode ec) {
+			switch (ec) {
+			case ErrNoKH:
+				return "ErrNoKH";
+				break;
+			case ErrNoScan:
+				return "ErrNoScan";
+				break;
+			case ErrNoWHILE:
+				return "ErrNoWHILE";
+				break;
+			case ErrNoIF:
+				return "ErrNoIF";
+				break;
+			case ErrCompare:
+				return "ErrCompare";
+				break;
+			case ErrNoEnd:
+				return "ErrNoEnd";
+				break;
+			case ErrStreamError:
+				return "ErrStreamError";
+				break;
+			case ErrEOF:
+				return "ErrEOF";
+				break;
+			case ErrInvalidInput:
+				return "ErrInvalidInput";
+				break;
+			case ErrInvalidIdentifier:
+				return "ErrInvalidIdentifier";
+				break;
+			case ErrIntegerOverflow:
+				return "ErrIntegerOverflow";
+				break;
+			case ErrNoBegin:
+				return "ErrNoBegin";
+				break;
+			case ErrNeedIdentifier:
+				return "ErrNeedIdentifier";
+				break;
+			case ErrConstantNeedValue:
+				return "ErrConstantNeedValue";
+				break;
+			case ErrNoSemicolon:
+				return "ErrNoSemicolon";
+				break;
+			case ErrInvalidVariableDeclaration:
+				return "ErrInvalidVariableDeclaration";
+				break;
+			case ErrIncompleteExpression:
+				return "ErrIncompleteExpression";
+				break;
+			case ErrNotDeclared:
+				return "ErrNotDeclared";
+				break;
+			case ErrAssignToConstant:
+				return "ErrAssignToConstant";
+				break;
+			case ErrNotInitialized:
+				return "ErrNotInitialized";
+				break;
+			case ErrDuplicateDeclaration:
+				return "ErrDuplicateDeclaration";
+				break;
+			case ErrRedefine:
+				return "ErrRedefine";
+				break;
+			case ErrMustBeIdentifier:
+				return "ErrMustBeIdentifier";
+				break;
+			case ErrTypedef:
+				return "ErrTypedef";
+				break;
+			case ErrCalcVoid:
+				return "ErrCalcVoid";
+				break;
+			case ErrInvalidPrint:
+				return "ErrInvalidPrint";
+				break;
+			case ErrConstNoInit:
+				return "ErrConstNoInit";
+				break;
+			default:
+				break;
+
+
+			}
+		}
 		std::pair<uint64_t, uint64_t> GetPos()const { return _pos; }
 		ErrorCode GetCode() const { return _err; }
+
+		void print() {printf("Err at (%d,%d):\t%s\n",(int)_pos.first,(int)_pos.second,CtS(_err).c_str());}
+
 	private:
 		std::pair<uint64_t, uint64_t> _pos;
 		ErrorCode _err;
 	};
+
 
 	inline void swap(CompilationError& lhs, CompilationError& rhs) {
 		using std::swap;

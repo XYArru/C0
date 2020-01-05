@@ -22,7 +22,6 @@ namespace miniplc0 {
 			return std::make_pair(Sins, std::optional<CompilationError>());
 	}
 
-	// <C0-program> ::= {<variable-declaration>}{<function-definition>}
 	std::optional<CompilationError> Analyser::analyseC0Program() {
 		auto err = analyseVarDec();
 		if (err.has_value())
@@ -100,7 +99,7 @@ namespace miniplc0 {
 		auto next = nextToken();
 
 		if (next.value().GetType() != TokenType::IDENTIFIER) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrTypedef);
 		}
 		auto me = next;
 		next = nextToken();
@@ -320,7 +319,7 @@ namespace miniplc0 {
 				return errE;
 			next = nextToken();
 			if (next.value().GetType() != TokenType::YKH)
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 		else if (next.value().GetType() == TokenType::IDENTIFIER) {
 			if (isFunc(next.value().GetValueString())) {
@@ -470,7 +469,7 @@ namespace miniplc0 {
 				return errComp;
 
 			Opr* me = new Opr;
-			me->_opr = "iret";
+			me->_opr = "ret";
 			me->_x.clear();
 			me->_y.clear();
 			Ains[now].emplace_back(me);
@@ -480,14 +479,14 @@ namespace miniplc0 {
 	std::optional<CompilationError> Analyser::analysePar() {
 		auto next = nextToken();
 		if (next.value().GetType() != TokenType::ZKH)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		auto errPDL = analysePDL();
 		if (errPDL.has_value())
 			return errPDL;
 		next = nextToken();
 
 		if (next.value().GetType() != TokenType::YKH)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		return {};
 	}
 	std::optional<CompilationError> Analyser::analysePDL() {
@@ -517,7 +516,7 @@ namespace miniplc0 {
 			_type_flag = next.value().GetType();
 			next = nextToken();
 			if (next.value().GetType() != TokenType::IDENTIFIER) {
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrMustBeIdentifier);
 			}
 			//进行符号表操作
 			addLdt(next.value());
@@ -540,7 +539,7 @@ namespace miniplc0 {
 
 		next = nextToken();
 		if (next.value().GetType() != TokenType::ZKH)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 
 		auto errExpl = analyseExpl();
 		if (errExpl.has_value()) {
@@ -548,7 +547,7 @@ namespace miniplc0 {
 		}
 		next = nextToken();
 		if (next.value().GetType() != TokenType::YKH)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 
 		//操作 找到func在函数表中的位置 call
 		int32_t _index = getFunc(func.value().GetValueString())->index;
@@ -584,7 +583,7 @@ namespace miniplc0 {
 		level = 1;
 		auto next = nextToken();
 		if (next.value().GetType() != TokenType::ZDKH)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		auto err = analyseVarDec();
 		if (err.has_value())
 			return err;
@@ -601,7 +600,7 @@ namespace miniplc0 {
 
 		next = nextToken();
 		if (next.value().GetType() != TokenType::YDKH)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 
 		level = 0;
 		return {};
@@ -753,7 +752,7 @@ namespace miniplc0 {
 				return err;
 			next = nextToken();
 			if (next.value().GetType() != TokenType::YDKH)
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 			break;
 
 		case TokenType::SEMICOLON:
@@ -776,7 +775,7 @@ namespace miniplc0 {
 		auto errE = analyseExp();
 
 		if (errE.has_value())
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return errE;
 
 		auto next = nextToken();
 		if (next.value().GetType() == TokenType::YKH)
@@ -800,7 +799,7 @@ namespace miniplc0 {
 			next.value().GetType() != TokenType::NE &&
 			next.value().GetType() != TokenType::EQ
 			)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrCompare);
 
 		errE = analyseExp();
 		if (errE.has_value())
@@ -867,11 +866,11 @@ namespace miniplc0 {
 	std::optional<CompilationError> Analyser::analyseCondStmt() {
 		auto next = nextToken();
 		if (next.value().GetType() != TokenType::IF) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoIF);
 		}
 		next = nextToken();
 		if (next.value().GetType() != TokenType::ZKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 
 		auto errC = analyseCond();
@@ -879,7 +878,7 @@ namespace miniplc0 {
 			return errC;
 		next = nextToken();
 		if (next.value().GetType() != TokenType::YKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 
 		auto errS = analyseStmt();
@@ -969,17 +968,17 @@ namespace miniplc0 {
 
 			next = nextToken();
 			if (next.value().GetType() != TokenType::WHILE) {
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoWHILE);
 			}
 			next = nextToken();
 			if (next.value().GetType() != TokenType::ZKH) {
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 			}
 			auto errC = analyseCond();
 			if (errC.has_value())
 				return errC;
 			if (next.value().GetType() != TokenType::YKH) {
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 			}
 			next = nextToken();
 			if (next.value().GetType() != TokenType::SEMICOLON) {
@@ -1040,6 +1039,12 @@ namespace miniplc0 {
 		if (next.value().GetType() != TokenType::RETURN) {
 			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 		}
+		next = nextToken();
+		if (next.value().GetType() == TokenType::SEMICOLON) {
+			if(type_flag == TokenType::INT)
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrIncompleteExpression);
+		}
+		unreadToken();
 		auto errPD = analyseExp();
 		if (errPD.has_value()) {
 			return errPD;
@@ -1107,11 +1112,11 @@ namespace miniplc0 {
 	std::optional<CompilationError> Analyser::analysePrintStmt() {
 		auto next = nextToken();
 		if (next.value().GetType() != TokenType::PRINT) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 		next = nextToken();
 		if (next.value().GetType() != TokenType::ZKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 
 		auto errPD = analysePrint();
@@ -1120,12 +1125,12 @@ namespace miniplc0 {
 
 		next = nextToken();
 		if (next.value().GetType() != TokenType::YKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 
 		next = nextToken();
 		if (next.value().GetType() != TokenType::SEMICOLON) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 		return {};
 	}
@@ -1133,15 +1138,15 @@ namespace miniplc0 {
 		auto next = nextToken();
 		
 		if (next.value().GetType() != TokenType::SCAN) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoScan);
 		}
 		next = nextToken();
 		if (next.value().GetType() != TokenType::ZKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 		next = nextToken();
 		if (next.value().GetType() != TokenType::IDENTIFIER)
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrMustBeIdentifier);
 		auto me = next;
 
 		if (!isDclr(me.value().GetValueString()))
@@ -1179,13 +1184,12 @@ namespace miniplc0 {
 
 		next = nextToken();
 		if (next.value().GetType() != TokenType::YKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoKH);
 		}
 		next = nextToken();
 		if (next.value().GetType() != TokenType::SEMICOLON) {
 			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 		}
-		//语义操作
 		auto _opr = new Opr;
 		_opr->_opr = "iscan";
 		_opr->_x.clear();
@@ -1203,8 +1207,6 @@ namespace miniplc0 {
 	std::optional<Token> Analyser::nextToken() {
 		if (_offset == _tokens.size())
 			return {};
-		// 考虑到 _tokens[0..._offset-1] 已经被分析过了
-		// 所以我们选择 _tokens[0..._offset-1] 的 EndPos 作为当前位置
 		_current_pos = _tokens[_offset].GetEndPos();
 		return _tokens[_offset++];
 	}
@@ -1419,7 +1421,7 @@ namespace miniplc0 {
 			buffer[0] = 0xa2;
 			output.write(buffer, sizeof(char));
 			}
-			else if (strcmp(opr->_opr, "print") == 0) {
+			else if (strcmp(opr->_opr, "printl") == 0) {
 			buffer[0] = 0xaf;
 			output.write(buffer, sizeof(char));
 			}
@@ -1499,15 +1501,8 @@ namespace miniplc0 {
 	}
 	bool Analyser::isInit(const std::string& s) {
 
-		if (_gdt.find(s) != _gdt.end()) {
-			if (_gdt.at(s)->_init == true)
-				printf("T\n");
-			else
-				printf("F\n");
-		}
 		if (_gdt.find(s) != _gdt.end())
 			return _gdt.at(s)->_init;
-		printf("done\n");
 		if (_ldt.find(s) != _ldt.end()){
 			return _ldt.at(s)->_init;
 		}
