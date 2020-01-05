@@ -65,17 +65,18 @@ namespace miniplc0 {
 		std::optional<CompilationError> analyseC0Program();
 		std::optional<CompilationError> analyseVarDec();
 		std::optional<CompilationError> analyseInitDeclist();
+		std::optional<CompilationError> analyseInitDec();
 		std::optional<CompilationError> analyseFunDef();
 		std::optional<CompilationError> analyseExp();
 		std::optional<CompilationError> analyseAExp();
 		std::optional<CompilationError> analyseMExp();
 		std::optional<CompilationError> analyseUExp();
 		std::optional<CompilationError> analysePExp();
-
 		std::optional<CompilationError> analyseComp();
 		std::optional<CompilationError> analyseStmtSeq();
 		std::optional<CompilationError> analyseStmt();
 		std::optional<CompilationError> analyseLoopStmt();
+		std::optional<CompilationError> analyseForinitStmt();
 		std::optional<CompilationError> analyseJumpStmt();
 		std::optional<CompilationError> analysePrintStmt();
 		std::optional<CompilationError> analyseScanStmt();
@@ -110,6 +111,7 @@ namespace miniplc0 {
 		bool isInit(const std::string& s);
 		bool isVoid(const std::string& s);
 		bool isDclr(const std::string& s);
+		bool Analyser::isClDclr(const std::string& s);
 		void addFunc(const Token& tk);
 		Func* getFunc(const std::string& s);
 		ConstTable* getConst(const std::string& s);
@@ -133,7 +135,6 @@ namespace miniplc0 {
 		// 函数名 -> 对应的指令集
 		std::map <std::string, std::vector<Instruction>> _Ains;
 
-		// 为了简单处理，我们直接把符号表耦合在语法分析里
 
 		//std::string-> identifier
 		std::map <std::string, ConstTable*> _consts;

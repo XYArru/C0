@@ -40,7 +40,9 @@ namespace miniplc0 {
 			ZZKH_STATE,
 			YZKH_STATE,
 			ZDKH_STATE,
-			YDKH_STATE
+			YDKH_STATE,
+			DZS_STATE,
+			ZS_STATE
 		};
 	public:
 		Tokenizer(std::istream& ifs)

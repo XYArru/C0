@@ -33,22 +33,32 @@ using namespace miniplc0;
 	}
 
 	void SA(std::istream& input, std::ostream& output) {
-		
 
 		auto vc = _tokenize(input);
+
 		miniplc0::Analyser analyser(vc);
+
 		auto err = analyser.Analyse();
 		if (err.second.has_value()) {
-			//printf("sth wrong with analyser");
+			printf("sth wrong with analyser");
 			exit(0);
 		}
 
+
 		output << ".constants:\n";
-		auto citer = analyser._consts.begin();
-		while (citer != analyser._consts.end()) {
-			output << citer->second->index<<"\t"<< char(citer->second->type) << "\t\""<<citer->first<<"\"\n";
-			citer++;
+		
+		int ct = analyser._consts.size();
+		int ci = 0;
+		while (ci < ct) {
+			auto citer = analyser._consts.begin();
+			while (citer != analyser._consts.end()) {
+				if (citer->second->index == ci)
+					output << citer->second->index << "\t" << char(citer->second->type) << "\t\"" << citer->first << "\"\n";
+				citer++;
+			}
+			ci++;
 		}
+
 		output << ".start:\n";
 		
 		auto siter = analyser.Sins.begin();
@@ -67,40 +77,47 @@ using namespace miniplc0;
 		}
 		
 		output << ".functions:\n";
-		auto fiter = analyser._funcs.begin();
-		while (fiter != analyser._funcs.end()) {
-			output << fiter->second->index << "\t" << fiter->second->name_index << "\t" << fiter->second->num_par << "\t" << fiter->second->level << "\n";
-			fiter++;
-		}
-		
-		auto xeonblade = analyser._funcs.begin();
-		int b_lo = 0;
-		while (xeonblade != analyser._funcs.end()) {
-			std::string ss = xeonblade->first;
-
-			printf("g %s \n", ss.c_str());
-			output << '.' << 'F' << b_lo << ":\n";
-			std::vector<Opr*> xbld = analyser.Ains[ss];
-			auto itx = xbld.begin();
-			int j = 0;
-			while (itx != xbld.end()) {
-				
-				output << j << "\t" << analyser.Ains[ss].at(j)->_opr;
-				if (!analyser.Ains[ss].at(j)->_x.empty()) {
-
-					output << "\t" << analyser.Ains[ss].at(j)->_x.c_str();
-				}
-				if (!analyser.Ains[ss].at(j)->_y.empty()) {
-					output << "," << analyser.Ains[ss].at(j)->_y;
-				}
-				itx++;
-				j++;
-				output << "\n";
+		ct = analyser._funcs.size();
+		ci = 0;
+		while (ci < ct) {
+			auto fiter = analyser._funcs.begin();
+			while (fiter != analyser._funcs.end()) {
+				if(fiter->second->index == ci)
+				output << fiter->second->index << "\t" << fiter->second->name_index << "\t" << fiter->second->num_par << "\t" << fiter->second->level << "\n";
+				fiter++;
 			}
-			xeonblade++;
-			b_lo++;
+			ci++;
 		}
-		
+
+		ci = 0;
+		while (ci < ct) {
+			auto xeonblade = analyser._funcs.begin();
+			while (xeonblade != analyser._funcs.end()) {
+				if (ci == xeonblade->second->index) {
+					std::string ss = xeonblade->first;
+					output << '.' << 'F' << ci << ":\n";
+					std::vector<Opr*> xbld = analyser.Ains[ss];
+					auto itx = xbld.begin();
+					int j = 0;
+					while (itx != xbld.end()) {
+
+						output << j << "\t" << analyser.Ains[ss].at(j)->_opr;
+						if (!analyser.Ains[ss].at(j)->_x.empty()) {
+
+							output << "\t" << analyser.Ains[ss].at(j)->_x.c_str();
+						}
+						if (!analyser.Ains[ss].at(j)->_y.empty()) {
+							output << "," << analyser.Ains[ss].at(j)->_y;
+						}
+						itx++;
+						j++;
+						output << "\n";
+					}
+				}
+				xeonblade++;
+			}
+			ci++;
+		}
 		return;
 	}
 	int main(int argc, char** argv) {

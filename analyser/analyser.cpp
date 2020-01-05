@@ -4,7 +4,6 @@
 #include<iostream>
 #include<string>
 #include <stack>
-#include <cstring> 
 
 namespace miniplc0 {
 	int level = 0;
@@ -81,103 +80,14 @@ namespace miniplc0 {
 	std::optional<CompilationError> Analyser::analyseInitDeclist() {
 
 		while (true) {
+			
+			auto err = analyseInitDec();
+			if (err.has_value())
+				return err;
 			auto next = nextToken();
-
-			if (next.value().GetType() != TokenType::IDENTIFIER) {
-				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
-			}
-			auto me = next;
-			next = nextToken();
-			if (next.value().GetType() == TokenType::FZ) {
-				if (level == 0) {
-					miniplc0::Analyser::addGdt(me.value());
-					Var* sth = getG(me.value().GetValueString());
-					if (type_flag == TokenType::INT)
-						sth->type = 'i';
-					else
-						sth->type = 'v';
-					sth->_const = const_flag;
-					sth->_init = true;
-
-					Var* ne = getG(me.value().GetValueString());
-				}
-				else {
-					addLdt(me.value());
-					Var* sth = getL(me.value().GetValueString());
-					if (type_flag == TokenType::INT)
-						sth->type = 'i';
-					else
-						sth->type = 'v';
-					sth->_const = const_flag;
-					sth->_init = true;
-
-					Var* ne = getL(me.value().GetValueString());
-				}
-				auto errExp = analyseExp();
-
-				if (errExp.has_value())
-					return errExp;
-				return errExp;
-			}
-			else if (next.value().GetType() == TokenType::DOUHAO) {
-				if (const_flag)
-					return  std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrConstNoInit);
-				//加入局部表&&压栈
-				if (level == 0) {
-					addGdt(me.value());
-					Var* sth = getG(me.value().GetValueString());
-					if (type_flag == TokenType::INT)
-						sth->type = 'i';
-					else
-						sth->type = 'v';
-					sth->_const = const_flag;
-					sth->_init = false;
-				}
-				else {
-					addLdt(me.value());
-					Var* sth = getL(me.value().GetValueString());
-					if (type_flag == TokenType::INT)
-						sth->type = 'i';
-					else
-						sth->type = 'v';
-					sth->_const = const_flag;
-					sth->_init = false;
-				}
-
-				Opr* me = new Opr;
-				me->_opr = "ipush";
-				me->_x = "0";
-				me->_y.empty();
-				Sins.emplace_back(me);
-
-			}
-			else {
-
-				if (level == 0) {
-					addGdt(me.value());
-					Var* sth = getG(me.value().GetValueString());
-					if (type_flag == TokenType::INT)
-						sth->type = 'i';
-					else
-						sth->type = 'v';
-					sth->_const = const_flag;
-					sth->_init = false;
-				}
-				else {
-					addLdt(me.value());
-					Var* sth = getL(me.value().GetValueString());
-					if (type_flag == TokenType::INT)
-						sth->type = 'i';
-					else
-						sth->type = 'v';
-					sth->_const = const_flag;
-					sth->_init = false;
-				}
-				Opr* me = new Opr;
-				me->_opr = "ipush";
-				me->_x = "0";
-				me->_y.clear();
-				Sins.emplace_back(me);
+			if (next.value().GetType() == TokenType::DOUHAO)
+				continue;
+			if (next.value().GetType() == TokenType::SEMICOLON) {
 				unreadToken();
 				break;
 			}
@@ -185,7 +95,80 @@ namespace miniplc0 {
 
 		return {};
 	}
+	std::optional<CompilationError> Analyser::analyseInitDec(){
+		auto next = nextToken();
 
+		if (next.value().GetType() != TokenType::IDENTIFIER) {
+			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+		}
+		auto me = next;
+		next = nextToken();
+		if (next.value().GetType() == TokenType::FZ) {
+			if (level == 0) {
+				miniplc0::Analyser::addGdt(me.value());
+				Var* sth = getG(me.value().GetValueString());
+				if (type_flag == TokenType::INT)
+					sth->type = 'i';
+				else
+					sth->type = 'v';
+				sth->_const = const_flag;
+				sth->_init = true;
+
+			}
+			else if(level==1){
+				addLdt(me.value());
+				Var* sth = getL(me.value().GetValueString());
+				if (type_flag == TokenType::INT)
+					sth->type = 'i';
+				else
+					sth->type = 'v';
+				sth->_const = const_flag;
+				sth->_init = true;
+
+			}
+			auto errExp = analyseExp();
+			if (errExp.has_value())
+				return errExp;
+			return errExp;
+		}
+		else {
+			if (level == 0) {
+				addGdt(me.value());
+				Var* sth = getG(me.value().GetValueString());
+				if (type_flag == TokenType::INT)
+					sth->type = 'i';
+				else
+					sth->type = 'v';
+				sth->_const = const_flag;
+				sth->_init = false;
+
+				Opr* me = new Opr;
+				me->_opr = "ipush";
+				me->_x = "0";
+				me->_y.clear();
+				Sins.emplace_back(me);
+			}
+			else {
+				addLdt(me.value());
+				Var* sth = getL(me.value().GetValueString());
+				if (type_flag == TokenType::INT)
+					sth->type = 'i';
+				else
+					sth->type = 'v';
+				sth->_const = const_flag;
+				sth->_init = false;
+
+				Opr* me = new Opr;
+				me->_opr = "ipush";
+				me->_x = "0";
+				me->_y.clear();
+				Ains[now].emplace_back(me);
+			}
+			
+			unreadToken();
+		}
+		return {};
+	}
 	std::optional<CompilationError> Analyser::analyseExp() {
 
 		auto errAExp = analyseAExp();
@@ -330,7 +313,6 @@ namespace miniplc0 {
 	std::optional<CompilationError> Analyser::analysePExp() {
 
 		auto next = nextToken();
-
 		if (next.value().GetType() == TokenType::ZKH) {
 			auto errE = analyseExp();
 			if (errE.has_value())
@@ -345,6 +327,7 @@ namespace miniplc0 {
 				auto errC = analyseFunCall();
 			}
 			else {
+				/*
 				if (!isDclr(next.value().GetValueString())) {
 					return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotDeclared);
 				}
@@ -354,7 +337,8 @@ namespace miniplc0 {
 				}
 				if (isVoid(next.value().GetValueString())) {
 					return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrCalcVoid);
-				}
+				}*/
+
 
 				Var* _var = getL(next.value().GetValueString());
 				bool _L = true;
@@ -406,6 +390,7 @@ namespace miniplc0 {
 						Sins.emplace_back(me);
 					}
 					else {
+
 						Opr* me = new Opr;
 						me->_opr = "loada";
 						me->_x = "1";
@@ -439,7 +424,8 @@ namespace miniplc0 {
 				Ains[now].emplace_back(me);
 			}
 		}
-
+		else
+			unreadToken();
 		return {};
 	}
 
@@ -462,7 +448,9 @@ namespace miniplc0 {
 				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrRedefine);
 			now = next.value().GetValueString();
 			level = 1;
+
 			clrLdt();
+
 			auto errP = analysePar();
 			if (errP.has_value())
 				return errP;
@@ -474,10 +462,17 @@ namespace miniplc0 {
 			_f->name_index = getConst(next.value().GetValueString())->index;
 			_f->type = type_flag == TokenType::INT ? 'i' : 'v';
 			_f->level = level;
+
 			auto errComp = analyseComp();
 			level = 0;
 			if (errComp.has_value())
 				return errComp;
+
+			Opr* me = new Opr;
+			me->_opr = "iret";
+			me->_x.clear();
+			me->_y.clear();
+			Ains[now].emplace_back(me);
 		}
 	}
 
@@ -525,7 +520,6 @@ namespace miniplc0 {
 			}
 			//进行符号表操作
 			addLdt(next.value());
-
 			Var* me = getL(next.value().GetValueString());
 			me->type = _type_flag == TokenType::VOID ? 'v' : 'i';
 			me->_const = _const_flag ? true : false;
@@ -594,6 +588,11 @@ namespace miniplc0 {
 		if (err.has_value())
 			return err;
 
+		next = nextToken();
+		unreadToken();
+
+		
+
 		auto errS = analyseStmtSeq();
 		if (errS.has_value()) {
 			return errS;
@@ -613,6 +612,8 @@ namespace miniplc0 {
 			auto next = nextToken();
 			unreadToken();
 			if (next.value().GetType() != TokenType::WHILE &&
+				next.value().GetType() != TokenType::DO &&
+				next.value().GetType() != TokenType::FOR &&
 				next.value().GetType() != TokenType::SCAN &&
 				next.value().GetType() != TokenType::PRINT &&
 				next.value().GetType() != TokenType::IDENTIFIER &&
@@ -639,6 +640,8 @@ namespace miniplc0 {
 			return {};
 
 		if (next.value().GetType() != TokenType::WHILE &&
+			next.value().GetType() != TokenType::DO &&
+			next.value().GetType() != TokenType::FOR &&
 			next.value().GetType() != TokenType::SCAN &&
 			next.value().GetType() != TokenType::PRINT &&
 			next.value().GetType() != TokenType::IDENTIFIER &&
@@ -657,6 +660,8 @@ namespace miniplc0 {
 				return err;
 			break;
 		case TokenType::WHILE:
+		case TokenType::DO:
+		case TokenType::FOR:
 			err = analyseLoopStmt();
 			if (err.has_value())
 				return err;
@@ -691,15 +696,14 @@ namespace miniplc0 {
 
 				if (!isDclr(me.value().GetValueString()))
 					return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotDeclared);
-				if (!isInit(me.value().GetValueString()))
-					return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotInitialized);
+				/*if (!isInit(me.value().GetValueString()))
+					return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNotInitialized);*/
 				if (isVoid(me.value().GetValueString()))
 					return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrCalcVoid);
 				if (isConst(me.value().GetValueString()))
 					return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrCalcVoid);
 
 				Var* _var = getL(me.value().GetValueString());
-
 				bool _L = true;
 				if (_var == nullptr) {
 					_var = getG(me.value().GetValueString());
@@ -767,23 +771,25 @@ namespace miniplc0 {
 	}
 
 	std::optional<CompilationError> Analyser::analyseCond() {
-		auto errE = analyseExp();
 		
+		auto errE = analyseExp();
+
 		if (errE.has_value())
 			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+
 		auto next = nextToken();
 		if (next.value().GetType() == TokenType::YKH)
 		{
-			Opr* me = new Opr;
-			me->_opr = "bipush";
-			me->_x = std::to_string(0);
-			me->_y.clear();
-			Ains[now].emplace_back(me);
-			me = new Opr;
+
+			unreadToken();
+			jmp_flag.push(Ains[now].size());
+			auto me = new Opr;
 			me->_opr = "je";
 			me->_x.clear();
 			me->_y.clear();
 			Ains[now].emplace_back(me);
+			
+
 			return {};
 		}
 		if (next.value().GetType() != TokenType::LESS &&
@@ -808,8 +814,6 @@ namespace miniplc0 {
 		me = new Opr;
 		switch (next.value().GetType())
 		{
-			//缺操作数 后来分析完stmt后要填入
-
 		case TokenType::LESS:
 			me = new Opr;
 			me->_opr = "jge";
@@ -872,29 +876,47 @@ namespace miniplc0 {
 		auto errC = analyseCond();
 		if (errC.has_value())
 			return errC;
-
 		next = nextToken();
 		if (next.value().GetType() != TokenType::YKH) {
 			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 		}
+
 		auto errS = analyseStmt();
-		if (errS.has_value())
+		if (errS.has_value()) {
 			return errS;
+		}
 
 
-		auto chag = Ains[now];
-		auto me = chag.at(jmp_flag.top());
-		jmp_flag.pop();
-		me->_x = std::to_string(Ains[now].size()).c_str();
 
 		next = nextToken();
 		if (next.value().GetType() == TokenType::ELSE) {
+
+			auto nme = new Opr;
+			nme->_opr = "jmp";
+			nme->_x.clear();
+			nme->_y.clear();
+			Ains[now].emplace_back(nme);
+
+			auto chag = Ains[now];
+			auto me = chag.at(jmp_flag.top());
+			jmp_flag.pop();
+			me->_x = std::to_string(Ains[now].size()).c_str();
+
 			errS = analyseStmt();
 			if (errS.has_value())
 				return errS;
+
+			nme->_x = std::to_string(Ains[now].size()).c_str();
 		}
-		else
+		else {
+
+			auto chag = Ains[now];
+			auto me = chag.at(jmp_flag.top());
+			jmp_flag.pop();
+			me->_x = std::to_string(Ains[now].size()).c_str();
+
 			unreadToken();
+		}
 
 		return {};
 	}
@@ -902,33 +924,113 @@ namespace miniplc0 {
 	std::optional<CompilationError> Analyser::analyseLoopStmt() {
 		
 		auto next = nextToken();
-		if (next.value().GetType() != TokenType::WHILE) {
+		if (next.value().GetType() == TokenType::WHILE)  {
+			next = nextToken();
+			if (next.value().GetType() != TokenType::ZKH) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+
+			//循环之起始位置
+			auto xhqs = Ains[now].size();
+
+			auto errC = analyseCond();
+			if (errC.has_value())
+				return errC;
+			next = nextToken();
+			if (next.value().GetType() != TokenType::YKH) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+
+			auto errS = analyseStmt();
+			if (errS.has_value())
+				return errS;
+
+			auto me = new Opr;
+			me->_opr = "jmp";
+			me->_x = std::to_string(xhqs);
+			me->_y.clear();
+			Ains[now].emplace_back(me);
+
+
+			auto chag = Ains[now];
+			me = chag.at(jmp_flag.top());
+			jmp_flag.pop();
+			me->_x = std::to_string(Ains[now].size());
+
+			return {};
+		}
+		else if (next.value().GetType() == TokenType::DO) {
+			auto xhqs = Ains[now].size();
+
+			auto errS = analyseStmt();
+			if (errS.has_value())
+				return errS;
+
+			next = nextToken();
+			if (next.value().GetType() != TokenType::WHILE) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+			next = nextToken();
+			if (next.value().GetType() != TokenType::ZKH) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+			auto errC = analyseCond();
+			if (errC.has_value())
+				return errC;
+			if (next.value().GetType() != TokenType::YKH) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+			next = nextToken();
+			if (next.value().GetType() != TokenType::SEMICOLON) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+
+			auto me = new Opr;
+			me->_opr = "jmp";
+			me->_x = std::to_string(xhqs);
+			me->_y.clear();
+			Ains[now].emplace_back(me);
+
+			auto chag = Ains[now];
+			me = chag.at(jmp_flag.top());
+			jmp_flag.pop();
+			me->_x = std::to_string(Ains[now].size());
+			return {};
+		}
+		else if (next.value().GetType() == TokenType::FOR) {
+			next = nextToken();
+			if (next.value().GetType() != TokenType::ZKH) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+			auto errF = analyseForinitStmt();
+			if (errF.has_value())
+				return errF;
+
+			auto errC = analyseCond();
+			if (errC.has_value())
+				return errC;
+
+			next = nextToken();
+			if (next.value().GetType() != TokenType::SEMICOLON) {
+				return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
+			}
+			auto errS = analyseStmt();
+			if (errS.has_value())
+				return errS;
+			auto chag = Ains[now];
+			auto me = chag.at(jmp_flag.top());
+			jmp_flag.pop();
+			me->_x = std::to_string(Ains[now].size());
+			return {};
+		}
+		else{
 			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 		}
-		next = nextToken();
-		if (next.value().GetType() != TokenType::ZKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
-		}
+	}
 
-		auto errC = analyseCond();
-		if (errC.has_value())
-			return errC;
-		next = nextToken();
+	std::optional<CompilationError> Analyser::analyseForinitStmt() {
 
-		if (next.value().GetType() != TokenType::YKH) {
-			return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
-		}
-
-		auto errS = analyseStmt();
-		if (errS.has_value())
-			return errS;
-		//
-		auto chag = Ains[now];
-		auto me = chag.at(jmp_flag.top());
-		jmp_flag.pop();
-		me->_x = std::to_string(Ains[now].size());
-		
-		return {};
+		return std::make_optional<CompilationError>(_current_pos, ErrorCode::ErrNoSemicolon);
 	}
 
 	std::optional<CompilationError> Analyser::analyseJumpStmt() {
@@ -994,6 +1096,11 @@ namespace miniplc0 {
 			me->_y.empty();
 			Ains[now].emplace_back(me);
 		}
+		auto me = new Opr;
+		me->_opr = "printl";
+		me->_x.empty();
+		me->_y.empty();
+		Ains[now].emplace_back(me);
 		return {};
 	}
 	std::optional<CompilationError> Analyser::analysePrintStmt() {
@@ -1138,40 +1245,54 @@ namespace miniplc0 {
 		binary2byte(const_size, output);
 
 		char buffer[1];
-
-		auto citer = _consts.begin();
-		for (int i = 0; i < const_size; i++) {
-			char buffer[1];
-			buffer[0] = 0x00;
-			output.write(buffer, sizeof(char));
-			int len = citer->first.length();
-			binary2byte(len, output);
-			for (int j = 0; j < len; j++) {
-				buffer[0] = citer->first[j];
-				output.write(buffer, sizeof(char));
+		
+		int ct = _consts.size();
+		int ci = 0;
+		while (ci < ct) {
+			auto citer =_consts.begin();
+			while (citer != _consts.end()) {
+				if (citer->second->index == ci) {
+					char buffer[1];
+					buffer[0] = 0x00;
+					output.write(buffer, sizeof(char));
+					int len = citer->first.length();
+					binary2byte(len, output);
+					for (int j = 0; j < len; j++) {
+						buffer[0] = citer->first[j];
+						output.write(buffer, sizeof(char));
+					}
+				}
+				citer++;
 			}
-			citer++;
+			ci++;
 		}
 
-		printf("gcc %lld\t%lld\n", Sins.size(), _funcs.size());
 		binary2byte(Sins.size(), output);
 		for (int i = 0; i < Sins.size(); i++) {
 			printBinaryInstruction(Sins.at(i), output);
 			
 		}
 		binary2byte(_funcs.size(), output);
-		int i = 0;
-		for (auto fiter = _funcs.begin(); fiter != _funcs.end();i++, fiter++) {
-			binary2byte(i, output);
-			binary2byte(fiter->second->num_par, output);
-			binary2byte(1, output);
+		
 
-			binary2byte(Ains[fiter->first].size(), output);
-			for (int j = 0, tt = Ains[fiter->first].size(); j < tt; j++) {
-				printBinaryInstruction(Ains[fiter->first].at(j), output);
+		int ft = _funcs.size();
+		int fi = 0;
+		while (fi < ft) {
+			auto fiter = _funcs.begin();
+			while (fiter != _funcs.end()) {
+				if (fiter->second->index == fi) {
+					binary2byte(fi, output);
+					binary2byte(fiter->second->num_par, output);
+					binary2byte(1, output);
+					binary2byte(Ains[fiter->first].size(), output);
+					for (int j = 0, tt = Ains[fiter->first].size(); j < tt; j++) {
+						printBinaryInstruction(Ains[fiter->first].at(j), output);
+					}
+				}
+				fiter++;
 			}
+			fi++;
 		}
-
 	}
 
 	void Analyser::printBinaryInstruction(Opr* opr, std::ostream& output) {
@@ -1188,7 +1309,6 @@ namespace miniplc0 {
 				output.write(buffer, sizeof(char));
 			}
 			else if(strcmp(opr->_opr,"ipush") == 0)
-			//else if (std::strcmp(opr->_opr, "ipush") == 0) 
 			{
 				buffer[0] = 0x02;
 				output.write(buffer, sizeof(char));
@@ -1315,7 +1435,6 @@ namespace miniplc0 {
 		_offset--;
 	}
 
-
 	void Analyser::addConstantF(const Token& tk) {
 		ConstTable* me = new ConstTable;
 		me->type = 'S';
@@ -1371,7 +1490,6 @@ namespace miniplc0 {
 		_ldt.clear();
 		_nextLp = 0;
 	}
-
 	bool Analyser::isConst(const std::string& s) {
 		if (_ldt.find(s) != _ldt.end())
 			return _ldt.at(s)->_const;
@@ -1379,22 +1497,39 @@ namespace miniplc0 {
 			return _gdt.at(s)->_const;
 	}
 	bool Analyser::isInit(const std::string& s) {
-		if (_ldt.find(s) != _ldt.end())
-			return _ldt.at(s)->_init;
+
+		if (_gdt.find(s) != _gdt.end()) {
+			if (_gdt.at(s)->_init == true)
+				printf("T\n");
+			else
+				printf("F\n");
+		}
 		if (_gdt.find(s) != _gdt.end())
 			return _gdt.at(s)->_init;
+		printf("done\n");
+		if (_ldt.find(s) != _ldt.end()){
+			return _ldt.at(s)->_init;
+		}
+		
+		
 	}
+
 	bool Analyser::isVoid(const std::string& s) {
-		if (_ldt.find(s) != _ldt.end())
-			return _ldt.at(s)->type == 'v';
-		if (_gdt.find(s) != _gdt.end())
-			return _gdt.at(s)->type == 'v';
+		if (_gdt.find(s) != _gdt.end()) {
+			if (_gdt.at(s)->type == 'v')
+				return true;
+		}
+		if (_ldt.find(s) != _ldt.end()) {
+			if (_ldt.at(s)->type == 'v')
+				return true;
+		}
+		
+		return false;
 	}
 	bool Analyser::isDclr(const std::string& s) {
 		return _consts.find(s) == _consts.end() || _ldt.find(s) == _ldt.end() || _gdt.find(s) == _gdt.end();
 	}
+	bool Analyser::isClDclr(const std::string& s) {
+		return  _ldt.find(s) == _ldt.end() || _gdt.find(s) == _gdt.end();
+	}
 }
-/*
-
-//输出二进制指令
-}*/
