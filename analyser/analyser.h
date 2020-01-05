@@ -111,7 +111,7 @@ namespace miniplc0 {
 		bool isInit(const std::string& s);
 		bool isVoid(const std::string& s);
 		bool isDclr(const std::string& s);
-		bool Analyser::isClDclr(const std::string& s);
+		bool isClDclr(const std::string& s);
 		void addFunc(const Token& tk);
 		Func* getFunc(const std::string& s);
 		ConstTable* getConst(const std::string& s);

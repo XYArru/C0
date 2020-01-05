@@ -4,6 +4,7 @@
 #include<iostream>
 #include<string>
 #include <stack>
+#include<cstring> 
 
 namespace miniplc0 {
 	int level = 0;
